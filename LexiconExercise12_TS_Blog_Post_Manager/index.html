@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + TS</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+    <header>
+      <h1>J-Ps Fancy Blog</h1>
+    </header>
+    <main>
+      <form class="blog-post-form">
+        <label for="title-input">Add a title</label>
+        <input type="text" class="title-text-input" required id="title-input" />
+
+        <textarea
+          class="body-text-input"
+          required
+          id="body-input"
+          placeholder="What do you want to share?"
+        ></textarea>
+
+        <label for="author-input">Who wrote this?</label>
+        <input
+          type="text"
+          class="author-text-input"
+          required
+          id="author-input"
+        />
+      </form>
+    </main>
+  </body>
+</html>
