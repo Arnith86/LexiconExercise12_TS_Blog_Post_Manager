@@ -2,6 +2,11 @@ import "./style.css";
 import { dummyBlogPosts } from "./data";
 import type { IBlogPost } from "./types";
 
+const blogPostListEl = document.querySelector<HTMLElement>(".blog-post-list");
+
+// Register click events
+blogPostListEl?.addEventListener("click", (event) => handleOnClick(event));
+
 Array.from(dummyBlogPosts).forEach((dummyBlogPost) => {
   blogPostListEl?.appendChild(createBlogPostEl(dummyBlogPost));
 });
@@ -38,4 +43,15 @@ function createBlogPostEl(blogPost: IBlogPost): HTMLElement {
   return newBlogPostEl;
 }
 
+function handleOnClick(event: MouseEvent): void {
+  const target = event.target;
+
+  // TypeScript can’t know what type event.target will be before the event happens.
+  // This if ensures both runtime safety and type safety.
+  if (!(target instanceof HTMLElement)) return;
+
+  const blogListEl = target.closest<HTMLElement>(".blog-post-list");
+  if (blogListEl === null) return;
+
+  if (target.closest(".delete-post-button")) console.log("click click");
 }
