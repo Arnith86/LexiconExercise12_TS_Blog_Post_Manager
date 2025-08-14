@@ -105,15 +105,15 @@ function deleteBlogPost(blogPostEl: HTMLElement): void {
 
 function editBlogPost(blogListEl: HTMLElement): void {
   // Edit logic
-  const elements = getOriginalElements(blogListEl);
+  const elements = getOriginalElementsFromBlogPost(blogListEl);
   if (!elements) return;
 
-  const editableBlogTitleEl = document.createElement("input");
-  editableBlogTitleEl.type = "text";
-  editableBlogTitleEl.value = elements.originalTitleEl!.innerText;
+  const { originalTitleEl, originalContentEl, originalAuthor } = elements;
 
-  const editableBlogContentEl = document.createElement("textarea");
-  editableBlogContentEl.value = elements.originalContentEl.innerText;
+  const { editableBlogTitleEl, editableBlogContentEl } = createEditableFields(
+    originalTitleEl.innerText,
+    originalContentEl.innerText
+  );
 
   const actionButtonsEl = blogListEl.querySelector(".action-buttons");
   if (!actionButtonsEl) return;
@@ -128,8 +128,8 @@ function editBlogPost(blogListEl: HTMLElement): void {
         </button>
     `;
 
-  elements.originalTitleEl.replaceWith(editableBlogTitleEl);
-  elements.originalContentEl.replaceWith(editableBlogContentEl);
+  originalTitleEl.replaceWith(editableBlogTitleEl);
+  originalContentEl.replaceWith(editableBlogContentEl);
 
   // Save logic
   actionButtonsEl
@@ -137,7 +137,7 @@ function editBlogPost(blogListEl: HTMLElement): void {
     ?.addEventListener("click", () =>
       replaceBlogPostElement(
         editableBlogTitleEl.value,
-        elements.originalAuthor!.innerText,
+        originalAuthor!.innerText,
         editableBlogContentEl.value,
         blogListEl
       )
@@ -148,12 +148,23 @@ function editBlogPost(blogListEl: HTMLElement): void {
     ?.querySelector(".cancel-edit-button")
     ?.addEventListener("click", () =>
       replaceBlogPostElement(
-        elements.originalTitleEl.innerText,
-        elements.originalAuthor!.innerText,
-        elements.originalContentEl.innerText,
+        originalTitleEl.innerText,
+        originalAuthor!.innerText,
+        originalContentEl.innerText,
         blogListEl
       )
     );
+}
+
+function createEditableFields(title: string, content: string) {
+  const editableBlogTitleEl = document.createElement("input");
+  editableBlogTitleEl.type = "text";
+  editableBlogTitleEl.value = title;
+
+  const editableBlogContentEl = document.createElement("textarea");
+  editableBlogContentEl.value = content;
+
+  return { editableBlogTitleEl, editableBlogContentEl };
 }
 
 function replaceBlogPostElement(
@@ -177,7 +188,8 @@ function addDummyData() {
     blogPostListEl?.appendChild(createBlogPostEl(dummyBlogPost));
   });
 }
-function getOriginalElements(blogListEl: HTMLElement) {
+
+function getOriginalElementsFromBlogPost(blogListEl: HTMLElement) {
   const originalTitleEl =
     blogListEl.querySelector<HTMLHeadingElement>(".blog-post-title");
   const originalContentEl =
