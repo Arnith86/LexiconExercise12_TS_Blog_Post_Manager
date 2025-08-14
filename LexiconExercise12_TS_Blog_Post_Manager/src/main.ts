@@ -13,7 +13,7 @@ function createBlogPostEl(blogPost: IBlogPost): HTMLElement {
   const { title, author, content, timeStamp } = blogPost;
 
   const newBlogPostEl = document.createElement("article");
-  const classes = ["blogPost"];
+  const classes = ["blog-post"];
 
   newBlogPostEl.classList.add(...classes);
 
@@ -23,16 +23,14 @@ function createBlogPostEl(blogPost: IBlogPost): HTMLElement {
     <p>${content}</p>
     
     <div class="action-buttons">
-    <button class="delete-post-button" type="button">
-    <span class="icon">
-    Delete
-    </span>
-    </button>
+        <button class="delete-post-button" type="button">
+            <span class="icon">Delete</span>
+        </button>
     </div>
     
     <footer class="post-footer">
-    <p>written by ${author}</p>
-    <time>${timeStamp.toLocaleDateString()}</time>
+        <p>written by ${author}</p>
+        <time>${timeStamp.toLocaleDateString()}</time>
     </footer>
     
     </article>
@@ -48,10 +46,14 @@ function handleOnClick(event: MouseEvent): void {
   // This if ensures both runtime safety and type safety.
   if (!(target instanceof HTMLElement)) return;
 
-  const blogListEl = target.closest<HTMLElement>(".blog-post-list");
+  const blogListEl = target.closest<HTMLElement>(".blog-post");
   if (blogListEl === null) return;
 
-  if (target.closest(".delete-post-button")) console.log("click click");
+  if (target.closest(".delete-post-button")) deleteBlogPost(blogListEl);
+}
+
+function deleteBlogPost(blogPostEl: HTMLElement): void {
+  blogPostListEl!.removeChild(blogPostEl);
 }
 
 function addDummyData() {
