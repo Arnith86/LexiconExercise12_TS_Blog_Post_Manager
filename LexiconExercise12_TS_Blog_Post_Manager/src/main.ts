@@ -2,9 +2,14 @@ import "./style.css";
 import { dummyBlogPosts } from "./data";
 import type { IBlogPost } from "./types";
 
+const blogPostFormEl =
+  document.querySelector<HTMLFormElement>(".blog-post-form");
 const blogPostListEl = document.querySelector<HTMLElement>(".blog-post-list");
 
-// Register click events
+// Register events
+blogPostFormEl?.addEventListener("submit", (event) =>
+  handleOnBlogPostFormSubmit(event)
+);
 blogPostListEl?.addEventListener("click", (event) => handleOnClick(event));
 
 addDummyData();
@@ -18,25 +23,66 @@ function createBlogPostEl(blogPost: IBlogPost): HTMLElement {
   newBlogPostEl.classList.add(...classes);
 
   newBlogPostEl.innerHTML = /*html*/ `
-    <article>
-    <h2>${title}</h2>
-    <p>${content}</p>
-    
-    <div class="action-buttons">
-        <button class="delete-post-button" type="button">
-            <span class="icon">Delete</span>
-        </button>
-    </div>
-    
-    <footer class="post-footer">
-        <p>written by ${author}</p>
-        <time>${timeStamp.toLocaleDateString()}</time>
-    </footer>
-    
+    <article >
+        <h2 class="blog-post-title">${title}</h2>
+        <p class="blog-post-content">${content}</p>
+        
+        <div class="action-buttons">
+            <button class="delete-post-button" type="button">
+                <span class="icon">Delete</span>
+            </button>
+            
+            <button class="edit-post-button" type="button">
+                <span class="icon">Edit</span>
+            </button>
+
+        </div>
+        
+        <footer class="post-footer">
+            <p>Author: <i class="author-name">${author}</i></p>
+            <time>${timeStamp.toLocaleDateString()}</time>
+        </footer>
+        
     </article>
     `;
 
   return newBlogPostEl;
+}
+
+function handleOnBlogPostFormSubmit(event: SubmitEvent): void {
+  // Stops page from reloading
+  event.preventDefault();
+
+  const titleInput =
+    blogPostFormEl!.querySelector<HTMLInputElement>(".title-text-input");
+  const authorInput =
+    blogPostFormEl?.querySelector<HTMLInputElement>(".author-text-input");
+  const newTimeStamp = new Date();
+  const contentInput =
+    blogPostFormEl?.querySelector<HTMLInputElement>(".body-text-input");
+
+  const newBlogPost: IBlogPost = buildBlogPostObject(
+    titleInput!.innerText,
+    authorInput!.innerText,
+    newTimeStamp,
+    contentInput!.innerText
+  );
+
+  blogPostListEl?.appendChild(createBlogPostEl(newBlogPost));
+}
+
+function buildBlogPostObject(
+  titleInput: string,
+  authorInput: string,
+  newTimeStamp: Date,
+  contentInput: string
+): IBlogPost {
+  return {
+    title: titleInput,
+    author: authorInput,
+    timeStamp: newTimeStamp,
+    content: contentInput,
+  };
 }
 
 function handleOnClick(event: MouseEvent): void {
@@ -50,10 +96,85 @@ function handleOnClick(event: MouseEvent): void {
   if (blogListEl === null) return;
 
   if (target.closest(".delete-post-button")) deleteBlogPost(blogListEl);
+  if (target.closest(".edit-post-button")) editBlogPost(blogListEl);
 }
 
 function deleteBlogPost(blogPostEl: HTMLElement): void {
   blogPostListEl!.removeChild(blogPostEl);
+}
+
+function editBlogPost(blogListEl: HTMLElement): void {
+  // Edit logic
+  const originalTitleEl =
+    blogListEl.querySelector<HTMLHeadingElement>(".blog-post-title");
+  const originalContentEl =
+    blogListEl.querySelector<HTMLParagraphElement>(".blog-post-content");
+  const originalAuthor =
+    blogListEl.querySelector<HTMLParagraphElement>(".author-name");
+
+  if (!originalTitleEl || !originalContentEl) return;
+
+  const editableBlogTitleEl = document.createElement("input");
+  editableBlogTitleEl.type = "text";
+  editableBlogTitleEl.value = originalTitleEl?.innerText;
+
+  const editableBlogContentEl = document.createElement("textarea");
+  editableBlogContentEl.value = originalContentEl.innerText;
+
+  const actionButtonsEl = blogListEl.querySelector(".action-buttons");
+  if (!actionButtonsEl) return;
+  actionButtonsEl!.innerHTML = /*html*/ `
+        <button class="save-edit-button">
+            <span class="icon">Save</span>
+        </button>
+        
+        <button class="cancel-edit-button">
+            <span class="icon">Cancel</span>
+        </button>
+    `;
+
+  originalTitleEl.replaceWith(editableBlogTitleEl);
+  originalContentEl.replaceWith(editableBlogContentEl);
+
+  // Save logic
+  actionButtonsEl
+    ?.querySelector(".save-edit-button")
+    ?.addEventListener("click", () =>
+      replaceBlogPostElement(
+        editableBlogTitleEl.value,
+        originalAuthor!.innerText,
+        editableBlogContentEl.value,
+        blogListEl
+      )
+    );
+
+  // Cancel logic
+  actionButtonsEl
+    ?.querySelector(".cancel-edit-button")
+    ?.addEventListener("click", () =>
+      replaceBlogPostElement(
+        originalTitleEl.innerText,
+        originalAuthor!.innerText,
+        originalContentEl.innerText,
+        blogListEl
+      )
+    );
+}
+
+function replaceBlogPostElement(
+  newTitle: string,
+  author: string,
+  newContent: string,
+  blogListEl: HTMLElement
+) {
+  const updatedBlogPost: IBlogPost = buildBlogPostObject(
+    newTitle,
+    author,
+    new Date(),
+    newContent
+  );
+
+  blogPostListEl?.replaceChild(createBlogPostEl(updatedBlogPost), blogListEl);
 }
 
 function addDummyData() {
