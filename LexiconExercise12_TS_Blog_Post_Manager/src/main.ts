@@ -118,15 +118,7 @@ function editBlogPost(blogListEl: HTMLElement): void {
   const actionButtonsEl = blogListEl.querySelector(".action-buttons");
   if (!actionButtonsEl) return;
 
-  actionButtonsEl!.innerHTML = /*html*/ `
-        <button class="save-edit-button">
-            <span class="icon">Save</span>
-        </button>
-        
-        <button class="cancel-edit-button">
-            <span class="icon">Cancel</span>
-        </button>
-    `;
+  changeToEditActionButtons(actionButtonsEl);
 
   originalTitleEl.replaceWith(editableBlogTitleEl);
   originalContentEl.replaceWith(editableBlogContentEl);
@@ -154,6 +146,18 @@ function editBlogPost(blogListEl: HTMLElement): void {
         blogListEl
       )
     );
+}
+
+function changeToEditActionButtons(actionButtonsEl: Element) {
+  actionButtonsEl!.innerHTML = /*html*/ `
+        <button class="save-edit-button">
+            <span class="icon">Save</span>
+        </button>
+        
+        <button class="cancel-edit-button">
+            <span class="icon">Cancel</span>
+        </button>
+    `;
 }
 
 function createEditableFields(title: string, content: string) {
