@@ -105,24 +105,19 @@ function deleteBlogPost(blogPostEl: HTMLElement): void {
 
 function editBlogPost(blogListEl: HTMLElement): void {
   // Edit logic
-  const originalTitleEl =
-    blogListEl.querySelector<HTMLHeadingElement>(".blog-post-title");
-  const originalContentEl =
-    blogListEl.querySelector<HTMLParagraphElement>(".blog-post-content");
-  const originalAuthor =
-    blogListEl.querySelector<HTMLParagraphElement>(".author-name");
-
-  if (!originalTitleEl || !originalContentEl) return;
+  const elements = getOriginalElements(blogListEl);
+  if (!elements) return;
 
   const editableBlogTitleEl = document.createElement("input");
   editableBlogTitleEl.type = "text";
-  editableBlogTitleEl.value = originalTitleEl?.innerText;
+  editableBlogTitleEl.value = elements.originalTitleEl!.innerText;
 
   const editableBlogContentEl = document.createElement("textarea");
-  editableBlogContentEl.value = originalContentEl.innerText;
+  editableBlogContentEl.value = elements.originalContentEl.innerText;
 
   const actionButtonsEl = blogListEl.querySelector(".action-buttons");
   if (!actionButtonsEl) return;
+
   actionButtonsEl!.innerHTML = /*html*/ `
         <button class="save-edit-button">
             <span class="icon">Save</span>
@@ -133,8 +128,8 @@ function editBlogPost(blogListEl: HTMLElement): void {
         </button>
     `;
 
-  originalTitleEl.replaceWith(editableBlogTitleEl);
-  originalContentEl.replaceWith(editableBlogContentEl);
+  elements.originalTitleEl.replaceWith(editableBlogTitleEl);
+  elements.originalContentEl.replaceWith(editableBlogContentEl);
 
   // Save logic
   actionButtonsEl
@@ -142,7 +137,7 @@ function editBlogPost(blogListEl: HTMLElement): void {
     ?.addEventListener("click", () =>
       replaceBlogPostElement(
         editableBlogTitleEl.value,
-        originalAuthor!.innerText,
+        elements.originalAuthor!.innerText,
         editableBlogContentEl.value,
         blogListEl
       )
@@ -153,9 +148,9 @@ function editBlogPost(blogListEl: HTMLElement): void {
     ?.querySelector(".cancel-edit-button")
     ?.addEventListener("click", () =>
       replaceBlogPostElement(
-        originalTitleEl.innerText,
-        originalAuthor!.innerText,
-        originalContentEl.innerText,
+        elements.originalTitleEl.innerText,
+        elements.originalAuthor!.innerText,
+        elements.originalContentEl.innerText,
         blogListEl
       )
     );
@@ -181,4 +176,16 @@ function addDummyData() {
   Array.from(dummyBlogPosts).forEach((dummyBlogPost) => {
     blogPostListEl?.appendChild(createBlogPostEl(dummyBlogPost));
   });
+}
+function getOriginalElements(blogListEl: HTMLElement) {
+  const originalTitleEl =
+    blogListEl.querySelector<HTMLHeadingElement>(".blog-post-title");
+  const originalContentEl =
+    blogListEl.querySelector<HTMLParagraphElement>(".blog-post-content");
+  const originalAuthor =
+    blogListEl.querySelector<HTMLParagraphElement>(".author-name");
+
+  if (!originalTitleEl || !originalContentEl || !originalAuthor) return;
+
+  return { originalTitleEl, originalContentEl, originalAuthor };
 }
