@@ -7,9 +7,7 @@ const blogPostListEl = document.querySelector<HTMLElement>(".blog-post-list");
 // Register click events
 blogPostListEl?.addEventListener("click", (event) => handleOnClick(event));
 
-Array.from(dummyBlogPosts).forEach((dummyBlogPost) => {
-  blogPostListEl?.appendChild(createBlogPostEl(dummyBlogPost));
-});
+addDummyData();
 
 function createBlogPostEl(blogPost: IBlogPost): HTMLElement {
   const { title, author, content, timeStamp } = blogPost;
@@ -21,22 +19,22 @@ function createBlogPostEl(blogPost: IBlogPost): HTMLElement {
 
   newBlogPostEl.innerHTML = /*html*/ `
     <article>
-        <h2>${title}</h2>
-        <p>${content}</p>
-        
-        <div class="action-buttons">
-            <button class="delete-post-button" type="button">
-                <span class="icon">
-                    Delete
-                </span>
-            </button>
-        </div>
-
-        <footer class="post-footer">
-            <p>written by ${author}</p>
-            <time>${timeStamp.toLocaleDateString()}</time>
-        </footer>
-
+    <h2>${title}</h2>
+    <p>${content}</p>
+    
+    <div class="action-buttons">
+    <button class="delete-post-button" type="button">
+    <span class="icon">
+    Delete
+    </span>
+    </button>
+    </div>
+    
+    <footer class="post-footer">
+    <p>written by ${author}</p>
+    <time>${timeStamp.toLocaleDateString()}</time>
+    </footer>
+    
     </article>
     `;
 
@@ -54,4 +52,10 @@ function handleOnClick(event: MouseEvent): void {
   if (blogListEl === null) return;
 
   if (target.closest(".delete-post-button")) console.log("click click");
+}
+
+function addDummyData() {
+  Array.from(dummyBlogPosts).forEach((dummyBlogPost) => {
+    blogPostListEl?.appendChild(createBlogPostEl(dummyBlogPost));
+  });
 }
