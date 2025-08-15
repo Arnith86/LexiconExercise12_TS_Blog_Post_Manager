@@ -7,8 +7,8 @@ import {
   sortBlogPost,
   buildBlogPostObject,
   deleteBlogPost,
-  editBlogPost,
-} from "./blogPostList";
+} from "./blogPostListServices";
+import { editBlogPost } from "./blogPostServices";
 
 const blogPostFormEl =
   document.querySelector<HTMLFormElement>(".blog-post-form");
