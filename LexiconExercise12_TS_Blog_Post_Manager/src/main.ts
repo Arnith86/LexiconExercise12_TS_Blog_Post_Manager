@@ -2,7 +2,7 @@ import "./style.css";
 import * as Constants from "./constants";
 import { dummyBlogPosts } from "./data";
 import type { IBlogPost } from "./types";
-import { createBlogPostEl } from "./blogPostList";
+import { createBlogPostEl, sortBlogPost } from "./blogPostList";
 
 const blogPostFormEl =
   document.querySelector<HTMLFormElement>(".blog-post-form");
@@ -71,36 +71,36 @@ function handleOnSortButtonClick(event: MouseEvent): void {
     sortBlogPost(Constants.AUTHOR_NAME, blogPostListEl);
 }
 
-function sortBlogPost(
-  sortType: string,
-  listOfBlogPostEl: HTMLElement | null
-): void {
-  const posts = Array.from(blogPostListEl!.children) as HTMLElement[];
+// function sortBlogPost(
+//   sortType: string,
+//   listOfBlogPostEl: HTMLElement | null
+// ): void {
+//   const posts = Array.from(blogPostListEl!.children) as HTMLElement[];
 
-  posts.sort((a, b) => {
-    if (sortType === Constants.AUTHOR_NAME) {
-      const nameA = a
-        .querySelector(Constants.AUTHOR_NAME)!
-        .textContent!.toLowerCase();
-      const nameB = b
-        .querySelector(Constants.AUTHOR_NAME)!
-        .textContent!.toLowerCase();
+//   posts.sort((a, b) => {
+//     if (sortType === Constants.AUTHOR_NAME) {
+//       const nameA = a
+//         .querySelector(Constants.AUTHOR_NAME)!
+//         .textContent!.toLowerCase();
+//       const nameB = b
+//         .querySelector(Constants.AUTHOR_NAME)!
+//         .textContent!.toLowerCase();
 
-      return nameA.localeCompare(nameB);
-    } else if (sortType === Constants.TIME) {
-      const dateA = new Date(a.querySelector(Constants.TIME)!.innerHTML);
-      const dateB = new Date(b.querySelector(Constants.TIME)!.innerHTML!);
+//       return nameA.localeCompare(nameB);
+//     } else if (sortType === Constants.TIME) {
+//       const dateA = new Date(a.querySelector(Constants.TIME)!.innerHTML);
+//       const dateB = new Date(b.querySelector(Constants.TIME)!.innerHTML!);
 
-      return dateA.getTime() - dateB.getTime(); // newest first
-    }
+//       return dateA.getTime() - dateB.getTime(); // newest first
+//     }
 
-    return 0;
-  });
+//     return 0;
+//   });
 
-  listOfBlogPostEl!.innerHTML = ""; // This clears the element
+//   listOfBlogPostEl!.innerHTML = ""; // This clears the element
 
-  posts.forEach((post) => listOfBlogPostEl?.appendChild(post));
-}
+//   posts.forEach((post) => listOfBlogPostEl?.appendChild(post));
+// }
 
 function handleOnBlogPostClick(event: MouseEvent): void {
   const target = event.target;

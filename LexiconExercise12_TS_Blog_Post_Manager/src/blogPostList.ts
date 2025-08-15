@@ -1,4 +1,5 @@
 import type { IBlogPost } from "./types";
+import * as Constants from "./constants";
 
 export function createBlogPostEl(blogPost: IBlogPost): HTMLElement {
   const { title, author, content, timeStamp } = blogPost;
@@ -33,4 +34,35 @@ export function createBlogPostEl(blogPost: IBlogPost): HTMLElement {
     `;
 
   return newBlogPostEl;
+}
+
+export function sortBlogPost(
+  sortType: string,
+  listOfBlogPostEl: HTMLElement | null
+): void {
+  const posts = Array.from(listOfBlogPostEl!.children) as HTMLElement[];
+
+  posts.sort((a, b) => {
+    if (sortType === Constants.AUTHOR_NAME) {
+      const nameA = a
+        .querySelector(Constants.AUTHOR_NAME)!
+        .textContent!.toLowerCase();
+      const nameB = b
+        .querySelector(Constants.AUTHOR_NAME)!
+        .textContent!.toLowerCase();
+
+      return nameA.localeCompare(nameB);
+    } else if (sortType === Constants.TIME) {
+      const dateA = new Date(a.querySelector(Constants.TIME)!.innerHTML);
+      const dateB = new Date(b.querySelector(Constants.TIME)!.innerHTML!);
+
+      return dateA.getTime() - dateB.getTime(); // newest first
+    }
+
+    return 0;
+  });
+
+  listOfBlogPostEl!.innerHTML = ""; // This clears the element
+
+  posts.forEach((post) => listOfBlogPostEl?.appendChild(post));
 }
