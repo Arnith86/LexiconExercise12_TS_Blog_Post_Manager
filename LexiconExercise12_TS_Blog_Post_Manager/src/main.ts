@@ -2,6 +2,7 @@ import "./style.css";
 import * as Constants from "./constants";
 import { dummyBlogPosts } from "./data";
 import type { IBlogPost } from "./types";
+import { createBlogPostEl } from "./blogPostList";
 
 const blogPostFormEl =
   document.querySelector<HTMLFormElement>(".blog-post-form");
@@ -23,41 +24,6 @@ sortButtonsEl?.addEventListener("click", (event) =>
 
 addDummyData();
 
-function createBlogPostEl(blogPost: IBlogPost): HTMLElement {
-  const { title, author, content, timeStamp } = blogPost;
-
-  const newBlogPostEl = document.createElement("article");
-  const classes = ["blog-post"];
-
-  newBlogPostEl.classList.add(...classes);
-
-  newBlogPostEl.innerHTML = /*html*/ `
-    <article >
-        <h2 class="blog-post-title">${title}</h2>
-        <p class="blog-post-content">${content}</p>
-        
-        <div class="action-buttons">
-            <button class="delete-post-button" type="button">
-                <span class="icon">Delete</span>
-            </button>
-            
-            <button class="edit-post-button" type="button">
-                <span class="icon">Edit</span>
-            </button>
-
-        </div>
-        
-        <footer class="post-footer">
-            <p>Author: <i class="author-name">${author}</i></p>
-            <time>${timeStamp.toLocaleDateString()}</time>
-        </footer>
-        
-    </article>
-    `;
-
-  return newBlogPostEl;
-}
-
 function handleOnBlogPostFormSubmit(event: SubmitEvent): void {
   // Stops page from reloading
   event.preventDefault();
@@ -69,8 +35,6 @@ function handleOnBlogPostFormSubmit(event: SubmitEvent): void {
   const newTimeStamp = new Date();
   const contentInput =
     blogPostFormEl?.querySelector<HTMLInputElement>(".body-text-input");
-
-  console.log(titleInput!.value, authorInput, contentInput);
 
   const newBlogPost: IBlogPost = buildBlogPostObject(
     titleInput!.value,
