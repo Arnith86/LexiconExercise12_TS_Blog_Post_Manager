@@ -1,16 +1,25 @@
 import "./style.css";
+import * as Constants from "./constants";
 import { dummyBlogPosts } from "./data";
 import type { IBlogPost } from "./types";
 
 const blogPostFormEl =
   document.querySelector<HTMLFormElement>(".blog-post-form");
 const blogPostListEl = document.querySelector<HTMLElement>(".blog-post-list");
+const sortButtonsEl = document.querySelector<HTMLElement>(
+  ".sort-action-buttons"
+);
 
 // Register events
 blogPostFormEl?.addEventListener("submit", (event) =>
   handleOnBlogPostFormSubmit(event)
 );
-blogPostListEl?.addEventListener("click", (event) => handleOnClick(event));
+blogPostListEl?.addEventListener("click", (event) =>
+  handleOnBlogPostClick(event)
+);
+sortButtonsEl?.addEventListener("click", (event) =>
+  handleOnSortButtonClick(event)
+);
 
 addDummyData();
 
@@ -61,11 +70,13 @@ function handleOnBlogPostFormSubmit(event: SubmitEvent): void {
   const contentInput =
     blogPostFormEl?.querySelector<HTMLInputElement>(".body-text-input");
 
+  console.log(titleInput!.value, authorInput, contentInput);
+
   const newBlogPost: IBlogPost = buildBlogPostObject(
-    titleInput!.innerText,
-    authorInput!.innerText,
+    titleInput!.value,
+    authorInput!.value,
     newTimeStamp,
-    contentInput!.innerText
+    contentInput!.value
   );
 
   blogPostListEl?.appendChild(createBlogPostEl(newBlogPost));
@@ -85,7 +96,49 @@ function buildBlogPostObject(
   };
 }
 
-function handleOnClick(event: MouseEvent): void {
+function handleOnSortButtonClick(event: MouseEvent): void {
+  const target = event.target;
+
+  if (!(target instanceof HTMLElement)) return;
+
+  if (target.closest(".sort-new-first-button"))
+    sortBlogPost(Constants.TIME, blogPostListEl);
+  if (target.closest(".sort-alphabetically-button"))
+    sortBlogPost(Constants.AUTHOR_NAME, blogPostListEl);
+}
+
+function sortBlogPost(
+  sortType: string,
+  listOfBlogPostEl: HTMLElement | null
+): void {
+  const posts = Array.from(blogPostListEl!.children) as HTMLElement[];
+
+  posts.sort((a, b) => {
+    if (sortType === Constants.AUTHOR_NAME) {
+      const nameA = a
+        .querySelector(Constants.AUTHOR_NAME)!
+        .textContent!.toLowerCase();
+      const nameB = b
+        .querySelector(Constants.AUTHOR_NAME)!
+        .textContent!.toLowerCase();
+
+      return nameA.localeCompare(nameB);
+    } else if (sortType === Constants.TIME) {
+      const dateA = new Date(a.querySelector(Constants.TIME)!.innerHTML);
+      const dateB = new Date(b.querySelector(Constants.TIME)!.innerHTML!);
+
+      return dateA.getTime() - dateB.getTime(); // newest first
+    }
+
+    return 0;
+  });
+
+  listOfBlogPostEl!.innerHTML = ""; // This clears the element
+
+  posts.forEach((post) => listOfBlogPostEl?.appendChild(post));
+}
+
+function handleOnBlogPostClick(event: MouseEvent): void {
   const target = event.target;
 
   // TypeScript can’t know what type event.target will be before the event happens.
@@ -171,6 +224,19 @@ function createEditableFields(title: string, content: string) {
   return { editableBlogTitleEl, editableBlogContentEl };
 }
 
+function getOriginalElementsFromBlogPost(blogListEl: HTMLElement) {
+  const originalTitleEl =
+    blogListEl.querySelector<HTMLHeadingElement>(".blog-post-title");
+  const originalContentEl =
+    blogListEl.querySelector<HTMLParagraphElement>(".blog-post-content");
+  const originalAuthor =
+    blogListEl.querySelector<HTMLParagraphElement>(".author-name");
+
+  if (!originalTitleEl || !originalContentEl || !originalAuthor) return;
+
+  return { originalTitleEl, originalContentEl, originalAuthor };
+}
+
 function replaceBlogPostElement(
   newTitle: string,
   author: string,
@@ -191,17 +257,4 @@ function addDummyData() {
   Array.from(dummyBlogPosts).forEach((dummyBlogPost) => {
     blogPostListEl?.appendChild(createBlogPostEl(dummyBlogPost));
   });
-}
-
-function getOriginalElementsFromBlogPost(blogListEl: HTMLElement) {
-  const originalTitleEl =
-    blogListEl.querySelector<HTMLHeadingElement>(".blog-post-title");
-  const originalContentEl =
-    blogListEl.querySelector<HTMLParagraphElement>(".blog-post-content");
-  const originalAuthor =
-    blogListEl.querySelector<HTMLParagraphElement>(".author-name");
-
-  if (!originalTitleEl || !originalContentEl || !originalAuthor) return;
-
-  return { originalTitleEl, originalContentEl, originalAuthor };
 }
