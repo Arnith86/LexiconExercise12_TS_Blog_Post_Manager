@@ -1,7 +1,6 @@
-import "./style.css";
+import "./CSS/style.css";
 import { v4 as generateId } from "uuid";
 import * as Constants from "./constants";
-// import { dummyBlogPosts } from "./data";
 import type { IBlogPost } from "./types";
 import {
   sortBlogPost,

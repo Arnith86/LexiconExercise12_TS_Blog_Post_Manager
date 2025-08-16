@@ -1,0 +1,9 @@
+header {
+  display: flex;
+  justify-content: center;
+}
+
+header h1 {
+  padding: 2rem;
+  color: var(--main-color);
+}
