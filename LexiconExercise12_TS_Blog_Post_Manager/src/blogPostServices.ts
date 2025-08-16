@@ -1,4 +1,5 @@
 import { replaceBlogPostElement } from "./blogPostListServices";
+// import { dummyBlogPosts } from "./data";
 
 export function editBlogPost(
   blogListEl: HTMLElement,

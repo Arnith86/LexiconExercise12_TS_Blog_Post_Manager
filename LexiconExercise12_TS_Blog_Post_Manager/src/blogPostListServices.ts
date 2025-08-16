@@ -1,17 +1,23 @@
 import type { IBlogPost } from "./types";
 import * as Constants from "./constants";
 import { dummyBlogPosts } from "./data";
+import {
+  savePostsToLocalStorage,
+  loadPostsFromLocalStorage,
+  saveSortTypeToLocalStorage,
+  loadSortTypeFromLocalStorage,
+} from "./localStorageContainer";
 
 let storedBlogPosts: IBlogPost[] = loadPostsFromLocalStorage();
+// let storedBlogPostsSortType: string = loadSortTypeFromLocalStorage();
+// function savePostsToLocalStorage(): void {
+//   localStorage.setItem(Constants.BLOG_POSTS, JSON.stringify(storedBlogPosts));
+// }
 
-function savePostsToLocalStorage(): void {
-  localStorage.setItem(Constants.BLOG_POSTS, JSON.stringify(storedBlogPosts));
-}
-
-function loadPostsFromLocalStorage(): IBlogPost[] {
-  const stored = localStorage.getItem(Constants.BLOG_POSTS);
-  return stored ? JSON.parse(stored) : [];
-}
+// function loadPostsFromLocalStorage(): IBlogPost[] {
+//   const stored = localStorage.getItem(Constants.BLOG_POSTS);
+//   return stored ? JSON.parse(stored) : [];
+// }
 
 export function createBlogPostEl(blogPost: IBlogPost): HTMLElement {
   const { id, title, author, content, timeStamp } = blogPost;
@@ -84,7 +90,13 @@ export function replaceBlogPostElement(
   );
 
   blogPostListEl?.replaceChild(createBlogPostEl(updatedBlogPost), blogPostEl);
-  savePostsToLocalStorage();
+
+  const editedBlogPostIndex = storedBlogPosts.findIndex(
+    (blogPost) => blogPost.id === blogPostEl.id
+  );
+  storedBlogPosts[editedBlogPostIndex] = updatedBlogPost;
+
+  savePostsToLocalStorage(storedBlogPosts);
 }
 
 export function sortBlogPost(
@@ -115,9 +127,8 @@ export function sortBlogPost(
 
   listOfBlogPostEl!.innerHTML = ""; // This clears the element
 
-  posts.forEach((post) => {
-    listOfBlogPostEl?.appendChild(post);
-  });
+  posts.forEach((post) => listOfBlogPostEl?.appendChild(post));
+  saveSortTypeToLocalStorage(sortType);
 }
 
 export function deleteBlogPost(
@@ -130,7 +141,7 @@ export function deleteBlogPost(
     (blogPost) => blogPost.id != blogPostEl.id
   );
 
-  savePostsToLocalStorage();
+  savePostsToLocalStorage(storedBlogPosts);
 }
 
 export function addBlogPost(
@@ -142,12 +153,13 @@ export function addBlogPost(
 
   if (persist) {
     storedBlogPosts.push(newBlogPost);
-    savePostsToLocalStorage();
+    savePostsToLocalStorage(storedBlogPosts);
   }
 }
 
 export function populateWithLoadedBlogPosts(blogPostListEl: HTMLElement): void {
   let blogPosts = loadPostsFromLocalStorage();
+  let blogPostsSortType: string = loadSortTypeFromLocalStorage();
   let persist = false;
 
   if (blogPosts.length == 0) {
@@ -158,4 +170,6 @@ export function populateWithLoadedBlogPosts(blogPostListEl: HTMLElement): void {
   Array.from(blogPosts).forEach((blogPost) => {
     addBlogPost(blogPost, blogPostListEl!, persist);
   });
+
+  sortBlogPost(blogPostsSortType, blogPostListEl);
 }
