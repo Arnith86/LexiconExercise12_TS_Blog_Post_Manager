@@ -8,7 +8,8 @@ export function editBlogPost(
   const elements = getOriginalElementsFromBlogPost(blogListEl);
   if (!elements) return;
 
-  const { originalTitleEl, originalContentEl, originalAuthor } = elements;
+  const { originalId, originalTitleEl, originalContentEl, originalAuthor } =
+    elements;
 
   const { editableBlogTitleEl, editableBlogContentEl } = createEditableFields(
     originalTitleEl.innerText,
@@ -28,6 +29,7 @@ export function editBlogPost(
     ?.querySelector(".save-edit-button")
     ?.addEventListener("click", () =>
       replaceBlogPostElement(
+        originalId,
         editableBlogTitleEl.value,
         originalAuthor!.innerText,
         editableBlogContentEl.value,
@@ -41,6 +43,7 @@ export function editBlogPost(
     ?.querySelector(".cancel-edit-button")
     ?.addEventListener("click", () =>
       replaceBlogPostElement(
+        originalId,
         originalTitleEl.innerText,
         originalAuthor!.innerText,
         originalContentEl.innerText,
@@ -74,6 +77,7 @@ function createEditableFields(title: string, content: string) {
 }
 
 function getOriginalElementsFromBlogPost(blogListEl: HTMLElement) {
+  const originalId = blogListEl.id;
   const originalTitleEl =
     blogListEl.querySelector<HTMLHeadingElement>(".blog-post-title");
   const originalContentEl =
@@ -81,7 +85,8 @@ function getOriginalElementsFromBlogPost(blogListEl: HTMLElement) {
   const originalAuthor =
     blogListEl.querySelector<HTMLParagraphElement>(".author-name");
 
-  if (!originalTitleEl || !originalContentEl || !originalAuthor) return;
+  if (!originalId || !originalTitleEl || !originalContentEl || !originalAuthor)
+    return;
 
-  return { originalTitleEl, originalContentEl, originalAuthor };
+  return { originalId, originalTitleEl, originalContentEl, originalAuthor };
 }

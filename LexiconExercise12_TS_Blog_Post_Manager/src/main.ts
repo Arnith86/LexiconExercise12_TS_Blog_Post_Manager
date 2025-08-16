@@ -1,12 +1,14 @@
 import "./style.css";
+import { v4 as generateId } from "uuid";
 import * as Constants from "./constants";
-import { dummyBlogPosts } from "./data";
+// import { dummyBlogPosts } from "./data";
 import type { IBlogPost } from "./types";
 import {
-  createBlogPostEl,
   sortBlogPost,
   buildBlogPostObject,
   deleteBlogPost,
+  populateWithLoadedBlogPosts,
+  addBlogPost,
 } from "./blogPostListServices";
 import { editBlogPost } from "./blogPostServices";
 
@@ -28,7 +30,8 @@ sortButtonsEl?.addEventListener("click", (event) =>
   handleOnSortButtonClick(event)
 );
 
-addDummyData();
+// Populates with either loaded blogpost or dummy posts
+populateWithLoadedBlogPosts(blogPostListEl!);
 
 function handleOnBlogPostFormSubmit(event: SubmitEvent): void {
   // Stops page from reloading
@@ -38,18 +41,18 @@ function handleOnBlogPostFormSubmit(event: SubmitEvent): void {
     blogPostFormEl!.querySelector<HTMLInputElement>(".title-text-input");
   const authorInput =
     blogPostFormEl?.querySelector<HTMLInputElement>(".author-text-input");
-  const newTimeStamp = new Date();
   const contentInput =
     blogPostFormEl?.querySelector<HTMLInputElement>(".body-text-input");
 
   const newBlogPost: IBlogPost = buildBlogPostObject(
+    generateId(),
     titleInput!.value,
     authorInput!.value,
-    newTimeStamp,
+    new Date(),
     contentInput!.value
   );
 
-  blogPostListEl?.appendChild(createBlogPostEl(newBlogPost));
+  addBlogPost(newBlogPost, blogPostListEl!);
 }
 
 function handleOnSortButtonClick(event: MouseEvent): void {
@@ -79,8 +82,12 @@ function handleOnBlogPostClick(event: MouseEvent): void {
     editBlogPost(blogListEl, blogPostListEl!);
 }
 
-function addDummyData() {
-  Array.from(dummyBlogPosts).forEach((dummyBlogPost) => {
-    blogPostListEl?.appendChild(createBlogPostEl(dummyBlogPost));
-  });
-}
+// function populateWithLoadedBlogPosts(): void {
+//   let blogPosts = getLoadedBlogPosts();
+
+//   if (blogPosts.length == 0) blogPosts = dummyBlogPosts;
+
+//   Array.from(blogPosts).forEach((blogPost) => {
+//     addBlogPost(blogPost, blogPostListEl!);
+//   });
+// }

@@ -1,13 +1,28 @@
 import type { IBlogPost } from "./types";
 import * as Constants from "./constants";
+import { dummyBlogPosts } from "./data";
+
+let storedBlogPosts: IBlogPost[] = loadPostsFromLocalStorage();
+
+function savePostsToLocalStorage(): void {
+  localStorage.setItem(Constants.BLOG_POSTS, JSON.stringify(storedBlogPosts));
+}
+
+function loadPostsFromLocalStorage(): IBlogPost[] {
+  const stored = localStorage.getItem(Constants.BLOG_POSTS);
+  return stored ? JSON.parse(stored) : [];
+}
 
 export function createBlogPostEl(blogPost: IBlogPost): HTMLElement {
-  const { title, author, content, timeStamp } = blogPost;
+  const { id, title, author, content, timeStamp } = blogPost;
+
+  // Ensures that timeStamp is a Date object,
+  // does not happen automatically when loaded from localStorage.
+  const date = timeStamp instanceof Date ? timeStamp : new Date(timeStamp);
 
   const newBlogPostEl = document.createElement("article");
-  const classes = ["blog-post"];
-
-  newBlogPostEl.classList.add(...classes);
+  newBlogPostEl.id = String(id);
+  newBlogPostEl.classList.add("blog-post");
 
   newBlogPostEl.innerHTML = /*html*/ `
     <article >
@@ -27,7 +42,7 @@ export function createBlogPostEl(blogPost: IBlogPost): HTMLElement {
         
         <footer class="post-footer">
             <p>Author: <i class="author-name">${author}</i></p>
-            <time>${timeStamp.toLocaleDateString()}</time>
+            <time>${date.toLocaleDateString()}</time>
         </footer>
         
     </article>
@@ -37,12 +52,14 @@ export function createBlogPostEl(blogPost: IBlogPost): HTMLElement {
 }
 
 export function buildBlogPostObject(
+  postId: string,
   titleInput: string,
   authorInput: string,
   newTimeStamp: Date,
   contentInput: string
 ): IBlogPost {
   return {
+    id: postId,
     title: titleInput,
     author: authorInput,
     timeStamp: newTimeStamp,
@@ -51,6 +68,7 @@ export function buildBlogPostObject(
 }
 
 export function replaceBlogPostElement(
+  blogPostId: string,
   newTitle: string,
   author: string,
   newContent: string,
@@ -58,6 +76,7 @@ export function replaceBlogPostElement(
   blogPostListEl: HTMLElement
 ) {
   const updatedBlogPost: IBlogPost = buildBlogPostObject(
+    blogPostId,
     newTitle,
     author,
     new Date(),
@@ -65,6 +84,7 @@ export function replaceBlogPostElement(
   );
 
   blogPostListEl?.replaceChild(createBlogPostEl(updatedBlogPost), blogPostEl);
+  savePostsToLocalStorage();
 }
 
 export function sortBlogPost(
@@ -95,7 +115,9 @@ export function sortBlogPost(
 
   listOfBlogPostEl!.innerHTML = ""; // This clears the element
 
-  posts.forEach((post) => listOfBlogPostEl?.appendChild(post));
+  posts.forEach((post) => {
+    listOfBlogPostEl?.appendChild(post);
+  });
 }
 
 export function deleteBlogPost(
@@ -103,4 +125,37 @@ export function deleteBlogPost(
   blogPostListEl: HTMLElement
 ): void {
   blogPostListEl!.removeChild(blogPostEl);
+
+  storedBlogPosts = storedBlogPosts.filter(
+    (blogPost) => blogPost.id != blogPostEl.id
+  );
+
+  savePostsToLocalStorage();
+}
+
+export function addBlogPost(
+  newBlogPost: IBlogPost,
+  blogPostListEl: HTMLElement,
+  persist: boolean = true
+): void {
+  blogPostListEl?.appendChild(createBlogPostEl(newBlogPost));
+
+  if (persist) {
+    storedBlogPosts.push(newBlogPost);
+    savePostsToLocalStorage();
+  }
+}
+
+export function populateWithLoadedBlogPosts(blogPostListEl: HTMLElement): void {
+  let blogPosts = loadPostsFromLocalStorage();
+  let persist = false;
+
+  if (blogPosts.length == 0) {
+    blogPosts = dummyBlogPosts;
+    persist = true;
+  }
+
+  Array.from(blogPosts).forEach((blogPost) => {
+    addBlogPost(blogPost, blogPostListEl!, persist);
+  });
 }
