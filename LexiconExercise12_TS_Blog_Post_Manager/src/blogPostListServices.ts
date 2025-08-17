@@ -22,28 +22,24 @@ export function createBlogPostEl(blogPost: IBlogPost): HTMLElement {
   newBlogPostEl.classList.add("blog-post");
 
   newBlogPostEl.innerHTML = /*html*/ `
-    <article >
-        <h2 class="blog-post-title">${title}</h2>
-        <p class="blog-post-content">${content}</p>
-        
-        <div class="action-buttons">
-            <button class="icon-button delete-post-button" type="button">
-              <span class="material-symbols-outlined">delete</span>
-            </button>
-            
-            <button class="icon-button edit-post-button" type="button">
-              <span class="material-symbols-outlined">edit</span>
-            </button>
-
-        </div>
-        
-        <footer class="post-footer">
-            <p>Author: <i class="author-name">${author}</i></p>
-            <time>${date.toLocaleDateString()}</time>
-        </footer>
-        
-    </article>
-    `;
+    <h2 class="blog-post-title">${title}</h2>
+    <p class="blog-post-content">${content}</p>
+    
+    <div class="action-buttons">
+      <button class="icon-button edit-post-button" type="button">
+        <span class="material-symbols-outlined">edit</span>
+      </button>
+    
+      <button class="icon-button delete-post-button" type="button">
+        <span class="material-symbols-outlined">delete</span>
+      </button>
+    </div>
+    
+    <footer class="post-footer">
+        <p>Author: <i class="author-name">${author}</i></p>
+        <time>${date.toLocaleDateString()}</time>
+    </footer>
+  `;
 
   return newBlogPostEl;
 }
