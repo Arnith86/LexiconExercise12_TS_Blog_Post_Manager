@@ -136,7 +136,10 @@ export function addBlogPost(
   blogPostListEl: HTMLElement,
   persist: boolean = true
 ): void {
-  blogPostListEl?.appendChild(createBlogPostEl(newBlogPost));
+  blogPostListEl?.insertAdjacentElement(
+    "afterbegin",
+    createBlogPostEl(newBlogPost)
+  );
 
   if (persist) {
     storedBlogPosts.push(newBlogPost);
