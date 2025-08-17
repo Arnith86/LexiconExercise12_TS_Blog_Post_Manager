@@ -56,12 +56,12 @@ export function editBlogPost(
 
 function changeToEditActionButtons(actionButtonsEl: Element) {
   actionButtonsEl!.innerHTML = /*html*/ `
-        <button class="save-edit-button">
-            <span class="icon">Save</span>
+        <button class="icon-button save-edit-button">
+            <span class="material-symbols-outlined">save</span>
         </button>
         
-        <button class="cancel-edit-button">
-            <span class="icon">Cancel</span>
+        <button class="icon-button cancel-edit-button">
+            <span class="material-symbols-outlined">cancel</span>
         </button>
     `;
 }

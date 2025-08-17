@@ -1,0 +1,6 @@
+.blog-post-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  padding: 1rem;
+}

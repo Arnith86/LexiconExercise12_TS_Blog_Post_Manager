@@ -80,13 +80,3 @@ function handleOnBlogPostClick(event: MouseEvent): void {
   if (target.closest(".edit-post-button"))
     editBlogPost(blogListEl, blogPostListEl!);
 }
-
-// function populateWithLoadedBlogPosts(): void {
-//   let blogPosts = getLoadedBlogPosts();
-
-//   if (blogPosts.length == 0) blogPosts = dummyBlogPosts;
-
-//   Array.from(blogPosts).forEach((blogPost) => {
-//     addBlogPost(blogPost, blogPostListEl!);
-//   });
-// }

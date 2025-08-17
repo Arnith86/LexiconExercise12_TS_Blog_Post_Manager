@@ -1,0 +1,27 @@
+.blog-post-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+textarea {
+  min-height: 100px;
+}
+
+.post-submit-button,
+.sort-action-buttons {
+  align-self: flex-end;
+}
+
+.sort-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sort-new-first-button,
+.sort-alphabetically-button {
+  width: max-content;
+  font-size: 1.25rem;
+  font-weight: bold;
+}

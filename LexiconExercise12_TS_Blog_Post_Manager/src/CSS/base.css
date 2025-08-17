@@ -1,11 +1,14 @@
 html {
   --main-color: #5c4033;
   --secondary-color: #fff8f0;
+  --button-color: #7b4f34;
+  --button-hover-color: #3b2317;
 }
 
 * {
   box-sizing: border-box;
   margin: 0;
+  font-family: "Lora", serif;
 }
 
 body {
@@ -18,5 +21,28 @@ body {
 
 main {
   width: 80%;
+  max-width: 840px;
   background-color: var(--secondary-color);
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  gap: 1rem;
+}
+
+.icon-button {
+  width: min-content;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: var(--button-color);
+  transition: color 0.2s ease;
+}
+
+.icon-button:hover {
+  color: var(--button-hover-color);
+}
+
+.material-symbols-outlined {
+  font-size: 2rem;
+  line-height: 1;
 }

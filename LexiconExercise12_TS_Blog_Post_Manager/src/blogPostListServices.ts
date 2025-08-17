@@ -9,15 +9,6 @@ import {
 } from "./localStorageContainer";
 
 let storedBlogPosts: IBlogPost[] = loadPostsFromLocalStorage();
-// let storedBlogPostsSortType: string = loadSortTypeFromLocalStorage();
-// function savePostsToLocalStorage(): void {
-//   localStorage.setItem(Constants.BLOG_POSTS, JSON.stringify(storedBlogPosts));
-// }
-
-// function loadPostsFromLocalStorage(): IBlogPost[] {
-//   const stored = localStorage.getItem(Constants.BLOG_POSTS);
-//   return stored ? JSON.parse(stored) : [];
-// }
 
 export function createBlogPostEl(blogPost: IBlogPost): HTMLElement {
   const { id, title, author, content, timeStamp } = blogPost;
@@ -36,12 +27,12 @@ export function createBlogPostEl(blogPost: IBlogPost): HTMLElement {
         <p class="blog-post-content">${content}</p>
         
         <div class="action-buttons">
-            <button class="delete-post-button" type="button">
-                <span class="icon">Delete</span>
+            <button class="icon-button delete-post-button" type="button">
+              <span class="material-symbols-outlined">delete</span>
             </button>
             
-            <button class="edit-post-button" type="button">
-                <span class="icon">Edit</span>
+            <button class="icon-button edit-post-button" type="button">
+              <span class="material-symbols-outlined">edit</span>
             </button>
 
         </div>
